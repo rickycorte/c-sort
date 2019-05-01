@@ -85,5 +85,29 @@ int merge_sort(int * arr, int size)
         //printf("\n");
     }
 
+    free(swap_block);
     return 0;
+}
+
+
+int * bubble_sort(int *arr, int size)
+{
+    int *res = malloc(size * sizeof(int));
+    memcpy(res, arr, size * sizeof(int));
+    int temp;
+
+    for(int i = 0; i < size; i++)
+    {
+        for(int j = 0; j < i; j++)
+        {
+            if(res[j] > res[i])
+            {
+                temp = res[j];
+                res[j] = res[i];
+                res[i] = temp;
+            } 
+        }
+    }
+
+    return res;
 }
