@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TEST_SIZE 4
+#define TEST_SIZE 5
 
 typedef struct 
 {
@@ -20,16 +20,17 @@ int a[] = {-4 -56, 1, 836, 3, 27, 9, 99999, 0, -18263, 0};
 int b[] = {1,2,3};
 int c[] = {10,9,8,7,6,5,4,3,2,1,0};
 int d[] = {80, 43,3,1,5,763,-1};
+int e[] = {1};
 
 void createTests()
 {
-    tests[0].input = a;
-    tests[0].expected_output= bubble_sort(a, 11);
-    tests[0].size = 11;
+    tests[1].input = a;
+    tests[1].expected_output= bubble_sort(a, 11);
+    tests[1].size = 11;
 
-    tests[1].input = b;
-    tests[1].expected_output= bubble_sort(b, 3);
-    tests[1].size = 3;
+    tests[0].input = b;
+    tests[0].expected_output= bubble_sort(b, 3);
+    tests[0].size = 3;
 
     tests[2].input = c;
     tests[2].expected_output= bubble_sort(c, 11);
@@ -38,7 +39,30 @@ void createTests()
     tests[3].input = d;
     tests[3].expected_output= bubble_sort(d, 7);
     tests[3].size = 7;
+
+    tests[4].input = e;
+    tests[4].expected_output= bubble_sort(e, 1);
+    tests[4].size = 1;
 }
+
+
+void clearTests()
+{
+    for(int i = 0; i < TEST_SIZE; i++)
+    {
+        free(tests[i].expected_output);
+    }
+}
+
+
+void printArr(int * arr, int size)
+{
+    for(int i = 0; i < size; i++)
+    {
+        printf("%i, ", arr[i]);
+    }
+}
+
 
 
 /**
@@ -50,16 +74,15 @@ void createTests()
  * 
  * @return 1 se l'esito e' positivo, 0 altrimenti
  */
-int check_arr(int (*sorter)(int*, int), int * in, int * out, int size)
+int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
 {
     //crea una copia degli array cosi che le funzioni possano modificarli
 
     int * input = malloc(size * sizeof(int));
-    int * output = malloc(size * sizeof(int));
+
     //non controllare se e' allocato correttamente, se manca la ram e' meglio che il programma crasha
 
     memcpy(input, in, size * sizeof(int));
-    memcpy(output, out, size * sizeof(int));
 
 
     printf("\n > Input: "); printArr(input, size);
@@ -76,24 +99,13 @@ int check_arr(int (*sorter)(int*, int), int * in, int * out, int size)
         if(input[i] != output[i])
         {
             free(input);
-            free(output);
             return 0;
         }
     }
 
     free(input);
-    free(output);
     return 1;
 }
-
-void printArr(int * arr, int size)
-{
-    for(int i = 0; i < size; i++)
-    {
-        printf("%i, ", arr[i]);
-    }
-}
-
 
 int main(int argc, char *argv[])
 {
@@ -111,7 +123,7 @@ int main(int argc, char *argv[])
         printf("\n");
     }
 
-    //bisognerebbe eliminare la ram allocata dai test
+    clearTests();
 
     return 0;
 }

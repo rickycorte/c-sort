@@ -42,7 +42,9 @@ int merge_sort(int * arr, int size)
         {
             // controlla che non si vada in out of range
             int items = (sj + step > size)? size - sj : step;
-            int swap_size = (items < step)? items/2 +1 : items/2;
+            int swap_size = step / 2;
+            if(items <= swap_size) continue;
+            
 
             //indica dove comincia il secondo blocco da cui prendere gli elementi
             int arr_tail = sj + swap_size;
