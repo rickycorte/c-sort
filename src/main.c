@@ -17,6 +17,8 @@ testCase *tests;
 int tests_size = 0;
 
 
+int success = 0, fails = 0;
+
 
 void printArr(int * arr, int size)
 {
@@ -130,6 +132,8 @@ void clearTests()
         free(tests[i].input);
         free(tests[i].expected_output);
     }
+
+    free(tests);
 }
 
 
@@ -185,12 +189,21 @@ int main(int argc, char *argv[])
     {
         printf("\nRunning test %i:", i);
         if(check_arr(merge_sort, tests[i].input, tests[i].expected_output , tests[i].size))
+        {
             printf("\nResult: OK\n",i);
+            success++;
+        }
         else
+        {
             printf("\nResult: ERROR\n",i);
+            fails++;
+        }
 
         printf("\n");
     }
+
+    printf("\nFINAL RESULT: %s\n", (success == tests_size)? "SUCCESS" : "FAIL");
+    printf("In %i tests: %i successes and %i fails\n", tests_size, success, fails);
 
     clearTests();
 
