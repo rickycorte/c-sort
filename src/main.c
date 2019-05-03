@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
+#define BENCH_TIMES 100
 
 typedef struct 
 {
@@ -155,16 +157,11 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
 
     //non controllare se e' allocato correttamente, se manca la ram e' meglio che il programma crasha
 
-    memcpy(input, in, size * sizeof(int));
-
-
-    printf("\n > Input: "); printArr(input, size);
+    memcpy(input, in, size * sizeof(int));  
 
     //esegui il sort
     sorter(input, size);
 
-    printf("\n > Got: "); printArr(input, size);
-    printf("\n > Expected: "); printArr(output, size);
 
     //controlla che il risultato combabi con quello desiderato
     for(int i = 0; i < size; i++)
@@ -172,6 +169,10 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
         if(input[i] != output[i])
         {
             free(input);
+            //printa info solo su test falliti
+            printf("\n > Input: "); printArr(in, size);
+            printf("\n > Got: "); printArr(input, size);
+            printf("\n > Expected: "); printArr(output, size);
             return 0;
         }
     }
@@ -180,6 +181,50 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
     return 1;
 }
 
+
+/**
+ * Esegue il benchmark di una funzione
+ * @param sorter puntatore a funzione int <>(int *, int)
+ * @param input array di input da dare in pasto a sorter
+ * @param output risultato atteso dal sort dell'array output
+ * @param size lunghezza di input e output
+ * @param exec_times numero di volte in cui va eseguito il test
+ */
+void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times)
+{
+    clock_t start_tm, best_tm, worst_tm, sum_tm = 0;
+
+    double avg;
+
+    for(int i = 0; i < exec_times; i++)
+    {
+        start_tm = clock();
+        check_arr(sorter, in, output, size);
+        start_tm = clock() - start_tm;
+
+        sum_tm = start_tm;
+
+        if(i == 0)
+        {
+            best_tm = start_tm;
+            worst_tm = start_tm;
+        }
+        else
+        {
+            if(start_tm < best_tm) best_tm = start_tm;
+            if(best_tm > worst_tm ) worst_tm = start_tm;
+        }
+        
+        sum_tm += start_tm;
+    }
+    
+    avg = ((double)sum_tm) / exec_times;
+
+    printf("BENCHMARK > Avg: %f Best: %ld Worst: %ld (Avg Time: %fs)", avg, best_tm, worst_tm, avg/CLOCKS_PER_SEC ); 
+
+}
+
+
 int main(int argc, char *argv[])
 {
 
@@ -187,22 +232,23 @@ int main(int argc, char *argv[])
 
     for(int i = 0; i < tests_size; i++)
     {
-        printf("\nRunning test %i:", i);
+        printf("\nRunning test %i: ", i);
         if(check_arr(merge_sort, tests[i].input, tests[i].expected_output , tests[i].size))
         {
-            printf("\nResult: OK\n",i);
+            printf("OK\n",i);
             success++;
+            //printf("Running benchmark, please wait...\n");
+            benckmark(merge_sort, tests[i].input, tests[i].expected_output , tests[i].size, BENCH_TIMES);
+
         }
         else
         {
             printf("\nResult: ERROR\n",i);
             fails++;
         }
-
-        printf("\n");
     }
 
-    printf("\nFINAL RESULT: %s\n", (success == tests_size)? "SUCCESS" : "FAIL");
+    printf("\n\nFINAL RESULT: %s\n", (success == tests_size)? "SUCCESS" : "FAIL");
     printf("In %i tests: %i successes and %i fails\n", tests_size, success, fails);
 
     clearTests();
