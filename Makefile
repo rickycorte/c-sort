@@ -3,9 +3,10 @@ build: clean
 	chmod +x sort 
 	mkdir build
 	mv sort build/sort
+	cp data/test_data.txt build/test_data.txt
 
 run: build
-	./build/sort
+	cd build && ./sort
 
 clean:
 	rm -rf build

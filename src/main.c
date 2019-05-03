@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TEST_SIZE 5
 
 typedef struct 
 {
@@ -14,45 +13,9 @@ typedef struct
 } testCase;
 
 
-testCase tests[TEST_SIZE];
+testCase *tests;
+int tests_size = 0;
 
-int a[] = {-4 -56, 1, 836, 3, 27, 9, 99999, 0, -18263, 0};
-int b[] = {1,2,3};
-int c[] = {10,9,8,7,6,5,4,3,2,1,0};
-int d[] = {80, 43,3,1,5,763,-1};
-int e[] = {1};
-
-void createTests()
-{
-    tests[1].input = a;
-    tests[1].expected_output= bubble_sort(a, 11);
-    tests[1].size = 11;
-
-    tests[0].input = b;
-    tests[0].expected_output= bubble_sort(b, 3);
-    tests[0].size = 3;
-
-    tests[2].input = c;
-    tests[2].expected_output= bubble_sort(c, 11);
-    tests[2].size = 11;
-
-    tests[3].input = d;
-    tests[3].expected_output= bubble_sort(d, 7);
-    tests[3].size = 7;
-
-    tests[4].input = e;
-    tests[4].expected_output= bubble_sort(e, 1);
-    tests[4].size = 1;
-}
-
-
-void clearTests()
-{
-    for(int i = 0; i < TEST_SIZE; i++)
-    {
-        free(tests[i].expected_output);
-    }
-}
 
 
 void printArr(int * arr, int size)
@@ -60,6 +23,112 @@ void printArr(int * arr, int size)
     for(int i = 0; i < size; i++)
     {
         printf("%i, ", arr[i]);
+    }
+}
+
+
+//TODO: controllare le riallocazioni
+void createTests()
+{
+    FILE *fp;
+
+    fp = fopen("test_data.txt", "r");
+    if(!fp)
+    {
+        printf("Missing test_data.txt\n");
+        return;
+    }
+
+    char c;
+    char num_buffer[10];
+    int used_buffer = 0;
+
+    int *arr = NULL, arr_size = 0, arr_allocated_size = 0;
+    int test_allocated_size = 0;
+
+    memset(num_buffer, 0, 10); // imposta a 0 tutto il buffer per il numero
+
+    while( (c = fgetc(fp)) != EOF)
+    {
+
+
+        //trovato numero
+        if(c == ' ' || c == '\n')
+        {
+            int num = atoi(num_buffer);
+            memset(num_buffer, 0, 10); // imposta a 0 tutto il buffer per il numero
+            used_buffer = 0;
+
+            //espandi l'array o allocalo se e' la prima esecuzione
+            if(arr_size >= arr_allocated_size)
+            {               
+                arr_allocated_size += 5;
+                arr = realloc(arr, arr_allocated_size * sizeof(int));             
+            }
+
+            //aggiungi il numero all'array
+            arr[arr_size] = num;
+            arr_size++;
+        }
+
+        //trovato fine array
+        if(c == '\n')
+        {
+            if(arr_size < 1) 
+            {
+                printf("Format error, arrays must have at leat one element!\n");
+                continue;
+            }
+
+            //espandi array dei test se necessario
+            if(tests_size >= test_allocated_size)
+            {
+                test_allocated_size += 5;
+                tests = realloc(tests, test_allocated_size * sizeof(testCase));
+            }    
+
+            //creo il nuovo test
+            tests[tests_size].input = arr;
+            tests[tests_size].expected_output = bubble_sort(arr, arr_size);
+            tests[tests_size].size = arr_size;
+
+            tests_size++;
+
+            //reset dei valori per il prossimo array
+            arr = NULL;
+            arr_allocated_size = 0;
+            arr_size = 0;
+            continue;   
+        }
+
+        //aggiungi il carattere del numero
+        if(c != ' ' && c != '\n')
+        {
+            num_buffer[used_buffer] = c;
+            used_buffer++;
+        }
+
+        // esegui un range check impreciso del valore massimo
+        if(used_buffer >= 9) 
+        {
+            printf("Format error! Cant accept numbers bigger than 2 * 10^9\n");
+            return;
+        }
+
+    }
+
+
+    fclose(fp);
+
+}
+
+
+void clearTests()
+{
+    for(int i = 0; i < tests_size; i++)
+    {
+        free(tests[i].input);
+        free(tests[i].expected_output);
     }
 }
 
@@ -112,7 +181,7 @@ int main(int argc, char *argv[])
 
     createTests();
 
-    for(int i = 0; i < TEST_SIZE; i++)
+    for(int i = 0; i < tests_size; i++)
     {
         printf("\nRunning test %i:", i);
         if(check_arr(merge_sort, tests[i].input, tests[i].expected_output , tests[i].size))
