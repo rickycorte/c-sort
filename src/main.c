@@ -1,5 +1,5 @@
-#include "sort.h"
-#include "test.h"
+#include "sortlibs/sort.h"
+#include "tests/test.h"
 
 #include <stdio.h>
 
