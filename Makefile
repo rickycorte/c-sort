@@ -1,5 +1,5 @@
 build: clean
-	cc -g -o sort src/sort.c src/sort.h src/main.c
+	cc -g -o sort src/sort.c src/sort.h src/test.h src/test.c src/main.c
 	chmod +x sort 
 	mkdir build
 	mv sort build/sort
