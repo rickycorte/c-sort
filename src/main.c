@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
     for(int itr =0; itr < algorithm_count; itr++)
     {
 
+        success = 0;
+        fails = 0;
+        
         printf("%s:", algorithms[itr].name);
 
         for(int i = 0; i < tests_size; i++)

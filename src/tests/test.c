@@ -281,6 +281,6 @@ void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int e
     
     avg = sum_tm / 1000 / exec_times;
 
-    printf("    BENCHMARK > Avg: %.2fms Best: %.2fms Worst: %.2fms", avg, best_tm/1000, worst_tm/1000); 
+    printf("    BENCHMARK > Avg: %.2fms | Best: %.2fms | Worst: %.2fms", avg, best_tm/1000, worst_tm/1000); 
 
 }
