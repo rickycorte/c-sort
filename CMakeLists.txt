@@ -22,7 +22,7 @@ add_custom_command(
                 ${CMAKE_SOURCE_DIR}/data/test_data.txt
                 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_data.txt)
 
-# aggiungi il target run per linux
+
 if (UNIX)
     
     add_custom_target(run COMMAND cd bin && ./sort DEPENDS sort)

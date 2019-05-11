@@ -8,6 +8,8 @@
 
 /* ----------------------------------------------------------------------- */
 
+// ns() function to get benchmark time with high precision
+
 #include <stdint.h>
 #if defined(__linux)
 #  define HAVE_POSIX_TIMER
@@ -64,9 +66,12 @@ static uint64_t ns() {
 
 
 /**
- * Bubble sort usato da load tests per oridinare in modo sicuro e lento gli array da testare
- * Perche bubble sort? perche ha un implementazione semplice e molto standard quindi e' difficile avere dei bug
- * Inoltre nella fase di caricamento non e' richiesta velocita ma sicurezza sui dati caricati per i test
+ * Bubble sort implementation to generate SAFE sorted output for tests
+ * We use this function to sort arrays loaded from test_data.txt
+ * 
+ * Why bubble sort?
+ * Because it is a really simple and well known implementation hard code in the wrong way!
+ * We can consider an array sorted with this function "a safe result" to use to check other implementations.
  */
 
 static int * bubble_sort(int *arr, int size)
@@ -93,10 +98,10 @@ static int * bubble_sort(int *arr, int size)
 
 
 /**
- * Printa un array nel terminale 
+ * print array in terminal
  * 
- * @param arr array da printare
- * @param size grandezza dell'array
+ * @param arr array to print
+ * @param size arr size
  */
 static void printArr(int * arr, int size)
 {
@@ -127,32 +132,31 @@ testCase *loadTests(const char file_name[], int *size)
     int test_allocated_size = 0;
     testCase *tests = NULL;
 
-    memset(num_buffer, 0, 10); // imposta a 0 tutto il buffer per il numero
+    memset(num_buffer, 0, 10); // set number buffer to 0
 
     while( (c = fgetc(fp)) != EOF)
     {
 
-
-        //trovato numero
+        // number found
         if(c == ' ' || c == '\n')
         {
             int num = atoi(num_buffer);
-            memset(num_buffer, 0, 10); // imposta a 0 tutto il buffer per il numero
+            memset(num_buffer, 0, 10); // set number buffer to 0
             used_buffer = 0;
 
-            //espandi l'array o allocalo se e' la prima esecuzione
+            // expand allocated array, or allocate a new one
             if(arr_size >= arr_allocated_size)
             {               
                 arr_allocated_size += 5;
                 arr = realloc(arr, arr_allocated_size * sizeof(int));             
             }
 
-            //aggiungi il numero all'array
+            // add read number to array
             arr[arr_size] = num;
             arr_size++;
         }
 
-        //trovato fine array
+        // found array end
         if(c == '\n')
         {
             if(arr_size < 1) 
@@ -161,35 +165,35 @@ testCase *loadTests(const char file_name[], int *size)
                 continue;
             }
 
-            //espandi array dei test se necessario
+            // extend tests array if more space is required
             if(*size >= test_allocated_size)
             {
                 test_allocated_size += 5;
                 tests = realloc(tests, test_allocated_size * sizeof(testCase));
             }    
 
-            //creo il nuovo test
+            // create the new test
             tests[*size].input = arr;
             tests[*size].expected_output = bubble_sort(arr, arr_size);
             tests[*size].size = arr_size;
 
             (*size)++;
 
-            //reset dei valori per il prossimo array
+            // reset values for the next test element
             arr = NULL;
             arr_allocated_size = 0;
             arr_size = 0;
             continue;   
         }
 
-        //aggiungi il carattere del numero
+        // add char to number string represantatio
         if(c != ' ' && c != '\n')
         {
             num_buffer[used_buffer] = c;
             used_buffer++;
         }
 
-        // esegui un range check impreciso del valore massimo
+        // range check, not really super safe but still better than nothing
         if(used_buffer >= 9) 
         {
             printf("Format error! Cant accept numbers bigger than 2 * 10^9\n");
@@ -219,25 +223,26 @@ void clearTests(testCase * tests, int size)
 
 int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
 {
-    //crea una copia degli array cosi che le funzioni possano modificarli
+    // copy input array, at least we can reuse the test
 
     int * input = malloc(size * sizeof(int));
 
-    //non controllare se e' allocato correttamente, se manca la ram e' meglio che il programma crasha
+    // no check, the program should crash here if we don't have enouth ram
 
     memcpy(input, in, size * sizeof(int));  
 
-    //esegui il sort
+    // run sort algorithm
     sorter(input, size);
 
 
-    //controlla che il risultato combabi con quello desiderato
+    // compare sort result with expected result
     for(int i = 0; i < size; i++)
     {
+
         if(input[i] != output[i])
         {
             free(input);
-            //printa info solo su test falliti
+            // print info for a failed test
             printf("\n > Input: "); printArr(in, size);
             printf("\n > Got: "); printArr(input, size);
             printf("\n > Expected: "); printArr(output, size);
@@ -256,14 +261,14 @@ void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int e
 
     double avg;
 
-    // esegui n volte il benckmark delle funzione con gli stessi dati
+    // we run the benchmark multiple times to reduce random performance spikes
     for(int i = 0; i < exec_times; i++)
     {
         start_tm = ns();
         check_arr(sorter, in, output, size);
         delta_tm = ns() - start_tm;
 
-        // ricordati il miglior e il peggior tempo di esecuzione
+        // calculate best/worst run time
         if(i == 0)
         {
             best_tm = delta_tm;

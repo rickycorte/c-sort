@@ -21,14 +21,16 @@ typedef struct
 } sort_algorithm;
 
 
+// algorithms to test
 sort_algorithm algorithms[] = {
 
     { merge_sort, "Merge Sort" },
-    { insertion_sort, "Insertion Sort" }
+    { insertion_sort, "Insertion Sort" },
+    {bubble_sort, "Bubble Sort"}
 
 };
 
-const int algorithm_count = 2;
+const int algorithm_count = 3;
 
 
 
@@ -42,7 +44,7 @@ int main(int argc, char *argv[])
 
         success = 0;
         fails = 0;
-        
+
         printf("%s:", algorithms[itr].name);
 
         for(int i = 0; i < tests_size; i++)
@@ -52,7 +54,6 @@ int main(int argc, char *argv[])
             {
                 printf("OK\n",i);
                 success++;
-                //printf("Running benchmark, please wait...\n");
                 benckmark(merge_sort, tests[i].input, tests[i].expected_output , tests[i].size, BENCH_TIMES);
 
             }

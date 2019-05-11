@@ -2,7 +2,8 @@
 #define C__SORT
 
 /**
- * Merge sort array
+ * Merge sort (iterative)
+ * 
  * @param arr array to sort
  * @param size arr size
  * 
@@ -12,7 +13,8 @@ int merge_sort(int * arr, int size);
 
 
 /**
- * Insert sort array
+ * Insertion sort (iterative)
+ * 
  * @param arr array to sort
  * @param size arr size
  * 
@@ -21,14 +23,14 @@ int merge_sort(int * arr, int size);
 int insertion_sort(int *arr, int size);
 
 /**
- * Implementazione piu facile per ordinare i valori dei test in modo sicuro
- * evitando eventuali bug del codice da testare
+ * Bubble sort (iterative)
  * 
- * @param arr array da ordinare
- * @param size lunghezza di arr
- * @return una copia di arr riordinato
- */
-int * bubble_sort(int *arr, int size);
+ * @param arr array to sort
+ * @param size arr size
+ * 
+ * @return 0 on success, 1 on error
+ * */
+int bubble_sort(int *arr, int size);
 
 
 #endif

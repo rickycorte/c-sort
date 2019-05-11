@@ -1,18 +1,42 @@
 # C sort algorithms
 
-Nulla da vedere giargianella :3
+Sort algorithms implementation in C
 
-# Build
+Still working for more implementations :heart:
 
-Debug:
+You can find the sort implementations in `src/sortlibs` folder
 
+
+ Algorithm | Implemented | Implementation type
+ :---: | :---: | :---:
+ Bubble sort | Yes | Iterative
+ Insetion sort | Yes | Iterative
+ Merge sort | Yes | Iterative
+ Heapsort | No | NA
+ Quicksort | No | NA
+
+
+## Build
+
+### Linux: 
+
+To build the benchmark program
 ```
 cmake .
 make
 ```
 
-Su linux e' disponibile anche un comando per avviare il programma dopo averlo compilato:
+If you also want to run the benchmark after compiling
+(`cmake .` must be run at least once before!)
 ```
 make run
 ```
-Nota: e' sempre necessario eseguire almeno una volta `cmake .` per generare il makefile
+
+or 
+```
+make srun
+```
+to save benchmark output to `bin/output.txt`
+
+## Other os
+This repo should be 100% cross platform and compilable everywhere, but I'haven't tested the compatibility!

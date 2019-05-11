@@ -21,19 +21,20 @@ int merge_sort(int * arr, int size)
     if(size == 1) return 0;
 
     int * swap_block = malloc(sizeof(int) * size);
-    if(!swap_block) return 1; // impossibile allocare la ram necessaria
+    if(!swap_block) return 1; // can't allocate ram
 
     int *source = arr, *dest = swap_block;
     int h = 0, k = 0, items = 0, base = 0;
 
     int ch, ck; // index cache
 
+    // iterate subarrays sizes
     for(int step = 2; step/2 < size; step *= 2)
     {
         //printf("\nStep %i start:", step);
         for(int i = 0; i < size; i++)
         {
-            //nuovo sottarray
+            // new subarray
             if(i % step == 0)
             {
                 h = 0;
@@ -42,8 +43,9 @@ int merge_sort(int * arr, int size)
                 if(items > step) items = step;
                 //printf("\n  ~~> Array start %i", i);
 
-                //oridinati dagli stadi precedenti
-                //copia soltanto sull'altro array e termina
+                // this sub array is too short
+                // and have just been ordered in a previous step
+                // so we just copy it
                 if(items < step/2) 
                 {
                     memcpy(dest + i, source + i, items * sizeof(int));
@@ -51,9 +53,14 @@ int merge_sort(int * arr, int size)
                     break;
                 }
 
-                base = i; // partenza del sotto array
+                base = i; // start index of the subarray
             }
 
+            // merge the two "virtual" subarrays to emulate recurion
+            // base is the base array index
+            // h is the index of the fist unmerged element of subarray 1
+            // k is the index of the fist unmerged element of subarray 2
+            // ch, ck are cached index to reduce math operations
             ch = base + h;
             ck = base + step/2 + k;
             if(h < step/2 && ( step/2 + k >= items || source[ch] < source[ck]) )
@@ -77,7 +84,7 @@ int merge_sort(int * arr, int size)
         //printf("\n  >>> dest: ");
         //printState(dest, 0, size);
 
-        //swappa alternativamente i due array su cui riodinare
+        // swap the array to use as destination of merge 
         if(source == arr)
         {
             source = swap_block;
@@ -90,9 +97,10 @@ int merge_sort(int * arr, int size)
         }      
     }
 
-    // che scelta infame del tipo della funzione :L
-    // mi tocca assicurarmi che i valori siano sull'array giusto
-    //ps: sono swappati prima del termine del ciclio quindi fa bordello
+    // We need to make sure that the data is written to the right array
+    // the one passed as function paramter
+    // this check seem wrong because the last for iteration swaps the arrays
+    // so we need to use the opposite condition to check if the data is on the right array
     if(dest == arr)
     {
         memcpy(arr, swap_block, size * sizeof(int));
@@ -104,26 +112,27 @@ int merge_sort(int * arr, int size)
 }
 
 
-int * bubble_sort(int *arr, int size)
+int bubble_sort(int *arr, int size)
 {
-    int *res = malloc(size * sizeof(int));
-    memcpy(res, arr, size * sizeof(int));
+    if(!arr || size < 1) return 1;
+    if(size == 1) return 0;
+
     int temp;
 
     for(int i = 0; i < size; i++)
     {
         for(int j = 0; j < i; j++)
         {
-            if(res[j] > res[i])
+            if(arr[j] > arr[i])
             {
-                temp = res[j];
-                res[j] = res[i];
-                res[i] = temp;
+                temp = arr[j];
+                arr[j] = arr[i];
+                arr[i] = temp;
             } 
         }
     }
 
-    return res;
+    return 0;
 }
 
 
@@ -138,7 +147,8 @@ int insertion_sort(int *arr, int size)
     {
         value = arr[i];
         j = i - 1;
-        //sposta a dx tutti gli elementi cosi da lasciare il buco per reinserire value
+
+        // move right all elements to make free the "insertion spot"
         while (j >= 0 && arr[j] > value)
         {
             arr[j+1] = arr[j]; 
