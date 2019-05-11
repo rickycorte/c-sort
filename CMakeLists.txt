@@ -26,5 +26,6 @@ add_custom_command(
 if (UNIX)
     
     add_custom_target(run COMMAND cd bin && ./sort DEPENDS sort)
+    add_custom_target(srun COMMAND cd bin && ./sort | tee output.txt DEPENDS sort)
 
 endif (UNIX)

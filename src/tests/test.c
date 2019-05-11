@@ -6,6 +6,63 @@
 #include <time.h>
 
 
+/* ----------------------------------------------------------------------- */
+
+#include <stdint.h>
+#if defined(__linux)
+#  define HAVE_POSIX_TIMER
+#  include <time.h>
+#  ifdef CLOCK_MONOTONIC
+#     define CLOCKID CLOCK_MONOTONIC
+#  else
+#     define CLOCKID CLOCK_REALTIME
+#  endif
+#elif defined(__APPLE__)
+#  define HAVE_MACH_TIMER
+#  include <mach/mach_time.h>
+#elif defined(_WIN32)
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#endif
+static uint64_t ns() {
+  static uint64_t is_init = 0;
+#if defined(__APPLE__)
+    static mach_timebase_info_data_t info;
+    if (0 == is_init) {
+      mach_timebase_info(&info);
+      is_init = 1;
+    }
+    uint64_t now;
+    now = mach_absolute_time();
+    now *= info.numer;
+    now /= info.denom;
+    return now;
+#elif defined(__linux)
+    static struct timespec linux_rate;
+    if (0 == is_init) {
+      clock_getres(CLOCKID, &linux_rate);
+      is_init = 1;
+    }
+    uint64_t now;
+    struct timespec spec;
+    clock_gettime(CLOCKID, &spec);
+    now = spec.tv_sec * 1.0e9 + spec.tv_nsec;
+    return now;
+#elif defined(_WIN32)
+    static LARGE_INTEGER win_frequency;
+    if (0 == is_init) {
+      QueryPerformanceFrequency(&win_frequency);
+      is_init = 1;
+    }
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return (uint64_t) ((1e9 * now.QuadPart)  / win_frequency.QuadPart);
+#endif
+}
+/* ----------------------------------------------------------------------- */
+
+
+
 /**
  * Bubble sort usato da load tests per oridinare in modo sicuro e lento gli array da testare
  * Perche bubble sort? perche ha un implementazione semplice e molto standard quindi e' difficile avere dei bug
@@ -195,36 +252,35 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
 
 void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times)
 {
-    clock_t start_tm, best_tm, worst_tm, sum_tm = 0;
+    double delta_tm, start_tm, best_tm, worst_tm, sum_tm = 0;
 
     double avg;
 
     // esegui n volte il benckmark delle funzione con gli stessi dati
     for(int i = 0; i < exec_times; i++)
     {
-        start_tm = clock();
+        start_tm = ns();
         check_arr(sorter, in, output, size);
-        start_tm = clock() - start_tm;
-
-        sum_tm = start_tm;
+        delta_tm = ns() - start_tm;
 
         // ricordati il miglior e il peggior tempo di esecuzione
         if(i == 0)
         {
-            best_tm = start_tm;
-            worst_tm = start_tm;
+            best_tm = delta_tm;
+            worst_tm = delta_tm;
         }
         else
         {
-            if(start_tm < best_tm) best_tm = start_tm;
-            if(best_tm > worst_tm ) worst_tm = start_tm;
+            if(delta_tm < best_tm) best_tm = delta_tm;
+
+            if(delta_tm > worst_tm ) worst_tm = delta_tm;
         }
         
-        sum_tm += start_tm;
+        sum_tm += delta_tm;
     }
     
-    avg = ((double)sum_tm) / exec_times;
+    avg = sum_tm / 1000 / exec_times;
 
-    printf("BENCHMARK > Avg: %f Best: %ld Worst: %ld (Avg Time: %fs)", avg, best_tm, worst_tm, avg/CLOCKS_PER_SEC ); 
+    printf("    BENCHMARK > Avg: %.2fms Best: %.2fms Worst: %.2fms", avg, best_tm/1000, worst_tm/1000); 
 
 }

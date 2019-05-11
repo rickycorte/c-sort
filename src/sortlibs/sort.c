@@ -125,3 +125,27 @@ int * bubble_sort(int *arr, int size)
 
     return res;
 }
+
+
+int insertion_sort(int *arr, int size)
+{
+    if(!arr || size < 1) return 1;
+    if(size == 1) return 0;
+
+    int j, value;
+
+    for(int i = 1; i < size; i++)
+    {
+        value = arr[i];
+        j = i - 1;
+        //sposta a dx tutti gli elementi cosi da lasciare il buco per reinserire value
+        while (j >= 0 && arr[j] > value)
+        {
+            arr[j+1] = arr[j]; 
+            j--;
+        }
+        arr[j+1] = value;  
+    }
+
+    return 0;
+}

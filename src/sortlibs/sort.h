@@ -10,6 +10,16 @@
  * */
 int merge_sort(int * arr, int size);
 
+
+/**
+ * Insert sort array
+ * @param arr array to sort
+ * @param size arr size
+ * 
+ * @return 0 on success, 1 on error
+ * */
+int insertion_sort(int *arr, int size);
+
 /**
  * Implementazione piu facile per ordinare i valori dei test in modo sicuro
  * evitando eventuali bug del codice da testare
@@ -19,5 +29,6 @@ int merge_sort(int * arr, int size);
  * @return una copia di arr riordinato
  */
 int * bubble_sort(int *arr, int size);
+
 
 #endif
