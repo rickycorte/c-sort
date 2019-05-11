@@ -10,7 +10,7 @@ You can find the sort implementations in `src/sortlibs` folder
  Algorithm | Implemented | Implementation type
  :---: | :---: | :---:
  Bubble sort | Yes | Iterative
- Insetion sort | Yes | Iterative
+ Insertion sort | Yes | Iterative
  Merge sort | Yes | Iterative
  Heapsort | No | NA
  Quicksort | No | NA
@@ -39,4 +39,4 @@ make srun
 to save benchmark output to `bin/output.txt`
 
 ## Other os
-This repo should be 100% cross platform and compilable everywhere, but I'haven't tested the compatibility!
+This repo should be 100% cross platform and compilable everywhere, but I haven't tested the compatibility!
