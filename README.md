@@ -36,13 +36,14 @@ make srun
 ```
 to save benchmark output to `bin/output.txt`
 
-## Other OS
+### Other OS
+
 This repo should be 100% cross platform and compilable everywhere, but I haven't tested the compatibility!
 
 
-## More tests
+## Generate tests
 
-To generate more tests run 
+To generate benchmark tests run 
 ```
 python3 testgen.py
 ```
