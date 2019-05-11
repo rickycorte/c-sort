@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        printf("\n\n  ! FINAL RESULT: %s\n", (success == tests_size)? "SUCCESS" : "FAIL");
+        printf("\n\n  ! FINAL RESULT (%s): %s\n", algorithms[itr].name,(success == tests_size)? "SUCCESS" : "FAIL");
         printf("    In %i tests: %i successes and %i fails\n\n", tests_size, success, fails);
     }
 
