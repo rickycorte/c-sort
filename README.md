@@ -48,3 +48,11 @@ To generate benchmark tests run
 python3 testgen.py
 ```
 this script will generate a brand new `test_data.txt` file to use!
+
+## Comparision
+
+You can run
+```
+./sort -c
+```
+to generate a comparision table in html format!

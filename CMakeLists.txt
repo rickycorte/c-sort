@@ -22,6 +22,7 @@ add_custom_command(
                 ${CMAKE_SOURCE_DIR}/data/test_data.txt
                 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_data.txt)
 
+add_custom_target(cmprun COMMAND cd bin && ./sort -c DEPENDS sort)
 
 if (UNIX)
     

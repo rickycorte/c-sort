@@ -255,7 +255,7 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
 }
 
 
-void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times)
+double benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times)
 {
     double delta_tm, start_tm, best_tm, worst_tm, sum_tm = 0;
 
@@ -287,5 +287,7 @@ void benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int e
     avg = sum_tm / 1000 / exec_times;
 
     printf("    BENCHMARK (size: %i)> Avg: %.2fms | Best: %.2fms | Worst: %.2fms", size, avg, best_tm/1000, worst_tm/1000); 
+    
+    return avg;
 
 }
