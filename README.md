@@ -1,7 +1,5 @@
 # C sort algorithms
 
-Sort algorithms implementation in C
-
 Still working for more implementations :heart:
 
 You can find the sort implementations in `src/sortlibs` folder
@@ -38,5 +36,14 @@ make srun
 ```
 to save benchmark output to `bin/output.txt`
 
-## Other os
+## Other OS
 This repo should be 100% cross platform and compilable everywhere, but I haven't tested the compatibility!
+
+
+## More tests
+
+To generate more tests run 
+```
+python3 testgen.py
+```
+this script will generate a brand new `test_data.txt` file to use!
