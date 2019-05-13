@@ -52,7 +52,7 @@ void StandardBench()
             {
                 printf("OK\n", i);
                 success++;
-                benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES);
+                benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES, 1);
             }
             else
             {
@@ -65,6 +65,45 @@ void StandardBench()
         printf("    In %i tests: %i successes and %i fails\n\n", tests_size, success, fails);
     }
 }
+
+
+void make_progress_bar(int value, int max, int size, const char *desc)
+{
+    double prg_perc = ((double)value) / max;
+    int progress = prg_perc * size;
+    int desc_sz = strlen(desc);
+
+    //delete last progress bar
+    if(value != 0)
+    {
+        for(int i= 0; i < size + 3 + 5 + desc_sz + 1; i++)
+        {
+            printf("\b");
+        }
+    }
+
+    //print new bar
+    printf("[");
+    for (int i = 0; i < progress -1; i++)
+    {
+        printf("=");
+    }
+    if(progress != size)
+        printf(">");
+    else
+        printf("=");
+    for (int i = 0; i < size - progress; i++)
+    {
+        printf(" ");
+    }
+    int perc = prg_perc * 100;
+    printf("] %3d%% %s", perc, desc);
+
+    if(value == max)
+        printf(": DONE\n");
+    
+}
+
 
 /**
  * Run benchmarks and create a comparative table
@@ -94,11 +133,12 @@ void BenckToHtmlTableFile()
     {
         fprintf(fd, "<tr><td style=\"text-align:center; width:50px\">%d</td><td style=\"text-align:center; width:100px\">%d</td>", i+1, tests[i].size);
 
+        make_progress_bar(i+1, tests_size, 20, "Testing algorithms");
+
         //run benckmark
         for(int itr = 0; itr < algorithm_count; itr++)
-        {
-
-            avgArr[itr] = benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES);           
+        {          
+            avgArr[itr] = benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES, 0);           
         }
 
         // find minimum
@@ -119,8 +159,6 @@ void BenckToHtmlTableFile()
             fprintf(fd, "<td style=\"text-align:center%s\">%.3f ms</td>", (itr == minIdx) ? "; background-color:#98ff91" : "", avgArr[itr]);
         }
 
-
-
         fprintf(fd, "</tr>");
     }
 
@@ -129,6 +167,8 @@ void BenckToHtmlTableFile()
 
     printf("\nWrote comparision table to %s\n", HTML_TABLE_FILE_NAME);
 }
+
+
 
 
 int main(int argc, char **argv)

@@ -53,9 +53,10 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size);
  * @param output expected result of sort operation
  * @param size input and output array sizes
  * @param exec_times number of times to run the test
+ * @param verbose set this to 1 to show verbose output
  * 
  * @return average time of benchmaks in ms
  */
-double benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times);
+double benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int exec_times, int verbose);
 
 #endif
