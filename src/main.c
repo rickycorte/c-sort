@@ -92,7 +92,7 @@ void BenckToHtmlTableFile()
     // test algorithms and write average
     for (int i = 0; i < tests_size; i++)
     {
-        fprintf(fd, "<tr><td>%d</td><td>%d</td>", i+1, tests[i].size);
+        fprintf(fd, "<tr><td style=\"text-align:center; width:50px\">%d</td><td style=\"text-align:center; width:100px\">%d</td>", i+1, tests[i].size);
 
         //run benckmark
         for(int itr = 0; itr < algorithm_count; itr++)
@@ -116,7 +116,7 @@ void BenckToHtmlTableFile()
         // write line to file
         for(int itr = 0; itr < algorithm_count; itr++)
         {
-            fprintf(fd, "<td %s>%.3f ms</td>", (itr == minIdx) ? "style=\"background-color:#98ff91\"" : "", avgArr[itr]);
+            fprintf(fd, "<td style=\"text-align:center%s\">%.3f ms</td>", (itr == minIdx) ? "; background-color:#98ff91" : "", avgArr[itr]);
         }
 
 
