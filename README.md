@@ -36,6 +36,11 @@ make srun
 ```
 to save benchmark output to `bin/output.txt`
 
+If you want to generate a comparision table run:
+```
+make cmprun
+```
+
 ### Other OS
 
 This repo should be 100% cross platform and compilable everywhere, but I haven't tested the compatibility!
@@ -49,10 +54,19 @@ python3 testgen.py
 ```
 this script will generate a brand new `test_data.txt` file to use!
 
-## Comparision
+## Parameteres
 
-You can run
 ```
 ./sort -c
 ```
 to generate a comparision table in html format!
+
+
+```
+./sort -v
+```
+to print every benchmark and test result on the console
+
+It's not possibile to combile these two options!
+
+

@@ -33,40 +33,14 @@ const int algorithm_count = 3;
 
 
 /**
- * Run tests and then benckmark algorithms
- */
-void StandardBench()
-{
-    for (int itr = 0; itr < algorithm_count; itr++)
-    {
-
-        success = 0;
-        fails = 0;
-
-        printf("%s:", algorithms[itr].name);
-
-        for (int i = 0; i < tests_size; i++)
-        {
-            printf("\n  * Running test %i: ", i);
-            if (check_arr(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size))
-            {
-                printf("OK\n", i);
-                success++;
-                benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES, 1);
-            }
-            else
-            {
-                printf("\n     Result: ERROR\n", i);
-                fails++;
-            }
-        }
-
-        printf("\n\n  ! FINAL RESULT (%s): %s\n", algorithms[itr].name, (success == tests_size) ? "SUCCESS" : "FAIL");
-        printf("    In %i tests: %i successes and %i fails\n\n", tests_size, success, fails);
-    }
-}
-
-
+ * Write a progress bar in terminal
+ * Make sure to run this function sequentially! No stoud in the middle or it will try to delete it!
+ * 
+ * @param value current progression value
+ * @param max maximum expected value
+ * @param size bar size (20 give best results)
+ * @param desc bar description
+ */ 
 void make_progress_bar(int value, int max, int size, const char *desc)
 {
     double prg_perc = ((double)value) / max;
@@ -74,9 +48,9 @@ void make_progress_bar(int value, int max, int size, const char *desc)
     int desc_sz = strlen(desc);
 
     //delete last progress bar
-    if(value != 0)
+    if(value > 1)
     {
-        for(int i= 0; i < size + 3 + 5 + desc_sz + 1; i++)
+        for(int i= 0; i < size + 9 + desc_sz; i++)
         {
             printf("\b");
         }
@@ -96,6 +70,7 @@ void make_progress_bar(int value, int max, int size, const char *desc)
     {
         printf(" ");
     }
+
     int perc = prg_perc * 100;
     printf("] %3d%% %s", perc, desc);
 
@@ -103,6 +78,61 @@ void make_progress_bar(int value, int max, int size, const char *desc)
         printf(": DONE\n");
     
 }
+
+
+
+/**
+ * Run tests and then benckmark algorithms
+ */
+void StandardBench(int verbose)
+{
+    for (int itr = 0; itr < algorithm_count; itr++)
+    {
+
+        success = 0;
+        fails = 0;
+
+        if(verbose) 
+            printf("%s:", algorithms[itr].name);
+
+        for (int i = 0; i < tests_size; i++)
+        {
+
+            if(!verbose && fails == 0)
+                make_progress_bar(i+1, tests_size, 20, algorithms[itr].name);
+
+            if(verbose)
+                printf("\n  * Running test %d: ", i);
+
+            if (check_arr(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size))
+            {
+                if(verbose) 
+                    printf("OK\n", i);
+
+                success++;
+                benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES, verbose);
+            }
+            else
+            {
+                if(verbose) 
+                {
+                    printf("\n     Result: ERROR\n", i);
+                }
+                else
+                {
+                    printf("Failed test\n");
+                }
+                
+
+                fails++;
+            }
+        }
+        
+        printf("%sFINAL RESULT (%s): %s\n", (verbose)? "\n\n  ! " : "" , algorithms[itr].name, (success == tests_size) ? "SUCCESS" : "FAIL");
+        printf("%sIn %d tests: %d successes and %d fails\n\n", (verbose) ? "    " : "" , tests_size, success, fails);
+    }
+}
+
 
 
 /**
@@ -169,6 +199,15 @@ void BenckToHtmlTableFile()
 }
 
 
+int hasChar(const char *str, char c)
+{
+    for(int i = 0; i < strlen(str); i++ )
+    {
+        if(str[i] == c) return 1;
+    }
+
+    return 0;
+}
 
 
 int main(int argc, char **argv)
@@ -176,13 +215,14 @@ int main(int argc, char **argv)
 
     tests = loadTests(TEST_FILE_NAME, &tests_size);
 
+
     if (argc == 2 && strcmp(argv[1], "-c") == 0)
     {
         BenckToHtmlTableFile();
     }
     else
     {
-        StandardBench();
+        StandardBench( argc == 2 && hasChar(argv[1], 'v'));
     }
 
     clearTests(tests, tests_size);

@@ -102,13 +102,17 @@ static int * bubble_sort(int *arr, int size)
  * 
  * @param arr array to print
  * @param size arr size
+ * @param limit max printed values
  */
-static void printArr(int * arr, int size)
+static void printArr(int * arr, int size, int limit)
 {
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < size && i < limit; i++)
     {
-        printf("%i, ", arr[i]);
+        printf("%d, ", arr[i]);
     }
+
+    if(size > limit)
+        printf("...");
 }
 
 
@@ -243,9 +247,10 @@ int check_arr(int (*sorter)(int*, int), int * in, int * output, int size)
         {
             free(input);
             // print info for a failed test
-            printf("\n > Input: "); printArr(in, size);
-            printf("\n > Got: "); printArr(input, size);
-            printf("\n > Expected: "); printArr(output, size);
+            printf("\n > Input: "); printArr(in, size, 5);
+            printf("\n > Got: "); printArr(input, size, 5);
+            printf("\n > Expected: "); printArr(output, size, 5);
+            printf("\n");
             return 0;
         }
     }
@@ -287,7 +292,7 @@ double benckmark(int (*sorter)(int*, int), int * in, int * output, int size, int
     avg = sum_tm / 1000 / exec_times;
 
     if(verbose)
-        printf("    BENCHMARK (size: %i)> Avg: %.2fms | Best: %.2fms | Worst: %.2fms", size, avg, best_tm/1000, worst_tm/1000); 
+        printf("    BENCHMARK (size: %d)> Avg: %.2fms | Best: %.2fms | Worst: %.2fms", size, avg, best_tm/1000, worst_tm/1000); 
     
     return avg;
 
