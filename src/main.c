@@ -24,13 +24,14 @@ typedef struct
 sort_algorithm algorithms[] = {
 
     {merge_sort, "Merge Sort"},
+    {heap_sort, "Heapsort [R]"},
+    {quick_sort, "Quicksort [R]"},
     {insertion_sort, "Insertion Sort"},
-    {bubble_sort, "Bubble Sort"},
-    {heap_sort, "Heapsort [R]"}
+    {bubble_sort, "Bubble Sort"}
 
 };
 
-const int algorithm_count = 4;
+const int algorithm_count = 5;
 
 
 /**
