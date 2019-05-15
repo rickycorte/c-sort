@@ -25,11 +25,12 @@ sort_algorithm algorithms[] = {
 
     {merge_sort, "Merge Sort"},
     {insertion_sort, "Insertion Sort"},
-    {bubble_sort, "Bubble Sort"}
+    {bubble_sort, "Bubble Sort"},
+    {heap_sort, "Heapsort [R]"}
 
 };
 
-const int algorithm_count = 3;
+const int algorithm_count = 4;
 
 
 /**
@@ -47,17 +48,9 @@ void make_progress_bar(int value, int max, int size, const char *desc)
     int progress = prg_perc * size;
     int desc_sz = strlen(desc);
 
-    //delete last progress bar
-    if(value > 1)
-    {
-        for(int i= 0; i < size + 9 + desc_sz; i++)
-        {
-            printf("\b");
-        }
-    }
-
     //print new bar
-    printf("[");
+    // \r -> go back to line start
+    printf("\r[");
     for (int i = 0; i < progress -1; i++)
     {
         printf("=");
@@ -73,6 +66,9 @@ void make_progress_bar(int value, int max, int size, const char *desc)
 
     int perc = prg_perc * 100;
     printf("] %3d%% %s", perc, desc);
+
+    //add some white space to the line end to ovverride extra characters moved by percentual size (1/2 spaces)
+    printf("    ");
 
     if(value == max)
         printf(": DONE\n");
@@ -194,7 +190,7 @@ void BenckToHtmlTableFile()
 
     fprintf(fd, "</table></body></html>");
     fclose(fd);
-
+    free(avgArr);
     printf("\nWrote comparision table to %s\n", HTML_TABLE_FILE_NAME);
 }
 
@@ -216,13 +212,13 @@ int main(int argc, char **argv)
     tests = loadTests(TEST_FILE_NAME, &tests_size);
 
 
-    if (argc == 2 && strcmp(argv[1], "-c") == 0)
+    if (argc == 2 && hasChar(argv[1], 'c'))
     {
         BenckToHtmlTableFile();
     }
     else
     {
-        StandardBench( argc == 2 && hasChar(argv[1], 'v'));
+        StandardBench(argc == 2 && hasChar(argv[1], 'v'));
     }
 
     clearTests(tests, tests_size);

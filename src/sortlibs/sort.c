@@ -159,3 +159,52 @@ int insertion_sort(int *arr, int size)
 
     return 0;
 }
+
+
+
+
+
+static void max_heapify(int* arr, int size, int i)
+{
+    int l = 2*i + 1;
+    int r = l+1;
+    int max = i;
+
+    //find max
+    if(l < size && arr[l] > arr[max])
+        max = l;
+    
+    if(r < size && arr[r] > arr[max])
+        max = r;
+    
+    if(max != i)
+    {
+        int t = arr[i];
+        arr[i] = arr[max];
+        arr[max] = t;
+
+        max_heapify(arr, size, max);
+    }
+}
+
+int heap_sort(int *arr, int size)
+{
+    if(!arr) return 1;
+
+    for(int i = size / 2 - 1; i >= 0; i--)
+    {
+        max_heapify(arr, size, i);
+    }
+
+    int t;
+
+    for(int i = size-1; i > 0; i--)
+    {
+        t = arr[0];
+        arr[0] = arr[i];
+        arr[i] = t;
+        max_heapify(arr, i, 0);
+    }
+
+    return 0;
+}
