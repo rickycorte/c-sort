@@ -10,8 +10,8 @@ You can find the sort implementations in `src/sortlibs` folder
  Bubble sort | Yes | Iterative
  Insertion sort | Yes | Iterative
  Merge sort | Yes | Iterative
- Heapsort | No | NA
- Quicksort | No | NA
+ Heapsort | Yes | Recursive
+ Quicksort | Yes | Recursive
 
 
 ## Build
@@ -54,7 +54,7 @@ python3 testgen.py
 ```
 this script will generate a brand new `test_data.txt` file to use!
 
-## Parameteres
+## Parameters
 
 ```
 ./sort -c
