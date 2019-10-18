@@ -104,7 +104,7 @@ void StandardBench(int verbose)
             if (check_arr(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size))
             {
                 if(verbose) 
-                    printf("OK\n", i);
+                    printf("OK\n");
 
                 success++;
                 benckmark(algorithms[itr].fuction, tests[i].input, tests[i].expected_output, tests[i].size, BENCH_TIMES, verbose);
@@ -113,7 +113,7 @@ void StandardBench(int verbose)
             {
                 if(verbose) 
                 {
-                    printf("\n     Result: ERROR\n", i);
+                    printf("\n     Result: ERROR\n");
                 }
                 else
                 {
